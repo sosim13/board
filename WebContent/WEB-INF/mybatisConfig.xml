@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE configuration 
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 변수를 가져올 장소 입력 -->
+	<!-- <properties resource="com/mybatisguest/config/db.properties"></properties> -->
+
+	<typeAliases>
+		<!-- <typeAlias alias="gb" type="com.mybatisguest.model.GuestBook" /> -->
+		<package name="kr.board.bean" />
+		<package name="kr.board.common" />
+	</typeAliases>
+	
+</configuration>
