@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.board.mapper.BoardMapper">
+	
+	<select id="getBoardList" resultType="BoardBean" parameterType="Paging">
+			select * from (
+				select @rownum2:=(@rownum2+1) AS PAGENUM, T2.* 
+				from (
+					select  @rownum1:=(@rownum1+1) AS rNum, T.* from (
+						SELECT
+							BOARDNO,
+							TITLE,
+							CONTENTS,
+							ID,
+							NAME,
+							REGDATE
+							FROM BOARD
+							ORDER BY REGDATE ASC
+						) T, (SELECT @rownum1 := 0) R1
+						ORDER BY rNum DESC
+					) T2, (SELECT @rownum2 := 0) R2
+			) T3
+			WHERE PAGENUM BETWEEN #{startNum} AND #{endNum}
+	</select>
+	
+	<select id="getBoardDetail" resultType="BoardBean" parameterType="BoardBean">
+		SELECT
+			*
+		FROM BOARD
+		WHERE BOARDNO = #{boardNo}
+	</select>
+	
+	<insert id="insertUpdateBoard" parameterType="BoardBean">		
+			INSERT INTO BOARD(
+				BOARDNO,
+				TITLE,
+				CONTENTS,
+				ID,
+				NAME,
+				PASSWORD,
+				REGDATE,
+				insert_cnt
+			) VALUES(
+				#{boardNo},
+				#{title},
+				#{contents},
+				#{id},
+				#{name},
+				#{password},
+				now(),
+				1
+			) ON DUPLICATE KEY 
+			UPDATE TITLE = #{title},
+				CONTENTS = #{contents},
+				ID = #{id},
+				NAME = #{name},
+				PASSWORD = #{password},
+				LAST_UPDATE_DATE = now(),
+				INSERT_CNT = INSERT_CNT + 1
+	</insert>
+</mapper>
