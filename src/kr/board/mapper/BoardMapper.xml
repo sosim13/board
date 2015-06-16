@@ -3,17 +3,10 @@
 <mapper namespace="kr.board.mapper.BoardMapper">
 	
 	<select id="getBoardList" resultType="BoardBean" parameterType="Paging">
-		SELECT
-			*
-		FROM(
-			SELECT
-				ROWNUM AS "PAGENUM",
-				T2.*
-			FROM(
-				SELECT
-					ROWNUM AS "rNum",
-					T.*
-					FROM(
+			select * from (
+				select @rownum2:=(@rownum2+1) AS PAGENUM, T2.* 
+				from (
+					select  @rownum1:=(@rownum1+1) AS rNum, T.* from (
 						SELECT
 							BOARDNO,
 							TITLE,
@@ -21,12 +14,12 @@
 							ID,
 							NAME,
 							REGDATE
-						FROM BOARD
-						ORDER BY REGDATE ASC
-					) T
-					ORDER BY ROWNUM DESC
-				) T2
-			)
+							FROM BOARD
+							ORDER BY REGDATE ASC
+						) T, (SELECT @rownum1 := 0) R1
+						ORDER BY rNum DESC
+					) T2, (SELECT @rownum2 := 0) R2
+			) T3
 			WHERE PAGENUM BETWEEN #{startNum} AND #{endNum}
 	</select>
 	
@@ -37,40 +30,32 @@
 		WHERE BOARDNO = #{boardNo}
 	</select>
 	
-	<insert id="insertUpdateBoard" parameterType="BoardBean">
-		MERGE INTO BOARD B
-		USING (
-			SELECT #{boardNo} AS "BOARDNO" FROM DUAL
-		) TMP
-		ON (
-			B.BOARDNO = TMP.BOARDNO
-		)
-		WHEN MATCHED THEN
-			UPDATE SET
-				TITLE = #{title},
-				CONTENTS = #{contents},
-				ID = #{id},
-				NAME = #{name},
-				PASSWORD = #{password},
-				LAST_UPDATE_DATE = SYSDATE
-			WHERE BOARDNO = #{boardNo}
-		WHEN NOT MATCHED THEN
-			INSERT(
+	<insert id="insertUpdateBoard" parameterType="BoardBean">		
+			INSERT INTO BOARD(
 				BOARDNO,
 				TITLE,
 				CONTENTS,
 				ID,
 				NAME,
 				PASSWORD,
-				REGDATE
+				REGDATE,
+				insert_cnt
 			) VALUES(
-				BOARD_SEQ.NEXTVAL,
+				#{boardNo},
 				#{title},
 				#{contents},
 				#{id},
 				#{name},
 				#{password},
-				SYSDATE
-			)
+				now(),
+				1
+			) ON DUPLICATE KEY 
+			UPDATE TITLE = #{title},
+				CONTENTS = #{contents},
+				ID = #{id},
+				NAME = #{name},
+				PASSWORD = #{password},
+				LAST_UPDATE_DATE = now(),
+				INSERT_CNT = INSERT_CNT + 1
 	</insert>
 </mapper>
