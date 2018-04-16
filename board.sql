@@ -36,7 +36,7 @@ MAXVALUE 999999999999;
 
 
 // MYSQL
-CREATE TABLE `board` (
+CREATE TABLE `BOARD` (
   `boardno` int(10) NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '',
   `contents` mediumtext,
