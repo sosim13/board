@@ -23,15 +23,15 @@ function goProcess(){
 			dataType : "text",
 			async : false,
 			cache : false,
-			success : function (json){
-				if(json.code == "200"){
+			success : function (text){
+				if(text != "0"){
 					alert("성공");
 				}else{
 					alert("패스워드가 다릅니다.");
 					$("#password").focus();
 					return;
 				}
-				//$("#brdForm").submit();
+				$("#brdForm").submit();
 				
 			},
 			error : function (){

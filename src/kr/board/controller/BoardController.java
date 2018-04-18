@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -87,9 +89,9 @@ public class BoardController {
 	
 	//패스워드 일치 확인
 	@RequestMapping("/board/passwordCheck")
-	public String passwordCheck(HttpServletRequest request, @ModelAttribute BoardBean boardBean){
+	public @ResponseBody String passwordCheck(HttpServletRequest request, @ModelAttribute BoardBean boardBean){
+
 		int result = boardService.passwordCheck(boardBean);
-		request.setAttribute("result", String.valueOf(result));
-		return null;
+		return String.valueOf(result);
 	}
 }
